@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 
 .vs/
+**/packages/*
+!**/packages/repositories.config
