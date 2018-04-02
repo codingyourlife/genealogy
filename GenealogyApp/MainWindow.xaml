@@ -1,0 +1,143 @@
+﻿<Window x:Class="GenealogyApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GenealogyApp"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        mc:Ignorable="d"
+        Title="Genealogy" Height="490" Width="765.8" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="155*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="155*"/>
+        </Grid.RowDefinitions>
+        <TabControl Margin="0,0,0,0">
+            <TabItem Header="Personen (MAIN)" DataContext="{Binding PersonsViewModel, Source={StaticResource Locator}}">
+                <Grid x:Name="PersonsWrapper">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="Inputs" Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Name="lblFirstName" Text="Vorname" />
+                                <TextBox Name="txtFirstName" Text="{Binding FirstName}" Width="200" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="lblLastName" Text="Nachname" Margin="0,0,0,-0.2" />
+                                <TextBox x:Name="txtLastName" Text="{Binding LastName}" Width="200" Margin="0,0,0,-0.2" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="2">
+                            <Button Content="Hinzufügen" Name="BtnAdd" Command="{Binding AddPersonCommand}" />
+                        </Grid>
+                    </Grid>
+                    <Grid Grid.Row="1" x:Name="PersonsContent">
+                        <ListView ItemsSource="{Binding Persons, Mode=OneWay}" SelectedItem="{Binding MainViewModel.SelectedPerson, Mode=TwoWay}" SelectionMode="Single" x:Name="LstPersons" Margin="0,0,-0.2,0.4" MouseDoubleClick="LstPersons_MouseDoubleClick">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <WrapPanel>
+                                        <TextBlock Text="{Binding FirstName, Mode=OneWay}" />
+                                        <TextBlock Text=" " />
+                                        <TextBlock Text="{Binding LastName, Mode=OneWay}" FontWeight="Bold" />
+                                        <TextBlock Text=" " />
+                                        <Button Content="[Entf]" Command="{Binding ElementName=LstPersons, Path=DataContext.RemovePersonCommand}" CommandParameter="{Binding}" />
+                                        <Button Content="[1Up]" Command="{Binding ElementName=LstPersons, Path=DataContext.MoveOneUpCommand}" CommandParameter="{Binding}" />
+                                    </WrapPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Eltern" DataContext="{Binding ParentsViewModel, Source={StaticResource Locator}}">
+                <Grid Grid.Row="1" x:Name="Parents" IsEnabled="{Binding MainViewModel.SelectedPerson, Converter={StaticResource newPersonToBooleanConverter}}">
+                    <Grid Name="GrdParentsInstructions">
+                        <WrapPanel Visibility="{Binding MainViewModel.SelectedPerson, Converter={StaticResource inverseNewPersonToVisbilityConverter}}">
+                            <TextBlock Text="Eltern von " />
+                            <TextBlock FontWeight="Bold" Text="{Binding MainViewModel.SelectedPerson.FullName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            <TextBlock Text=" wählen" />
+                        </WrapPanel>
+
+                        <WrapPanel Visibility="{Binding MainViewModel.SelectedPerson, Converter={StaticResource newPersonToVisbilityConverter}}">
+                            <TextBlock Foreground="Red" Text="Person im Personen Tab selektieren" />
+                        </WrapPanel>
+                    </Grid>
+
+                    <ListView ItemsSource="{Binding MainViewModel.Persons, Mode=OneWay}" SelectionMode="Multiple" SelectionChanged="LstParents_SelectionChanged" x:Name="LstParents" Margin="0,21,-0.2,0.2">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Text="{Binding FirstName, Mode=OneWay}" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="{Binding LastName, Mode=OneWay}" FontWeight="Bold" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Kinder" DataContext="{Binding ChildrenViewModel, Source={StaticResource Locator}}">
+                <Grid Grid.Row="1" x:Name="Children" IsEnabled="{Binding MainViewModel.SelectedPerson, Converter={StaticResource newPersonToBooleanConverter}}">
+                    <Grid>
+                        <WrapPanel Visibility="{Binding MainViewModel.SelectedPerson, Converter={StaticResource inverseNewPersonToVisbilityConverter}}">
+                            <TextBlock Text="Kinder von " />
+                            <TextBlock FontWeight="Bold" Text="{Binding MainViewModel.SelectedPerson.FullName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            <TextBlock Text=" wählen" />
+                        </WrapPanel>
+
+                        <WrapPanel Visibility="{Binding MainViewModel.SelectedPerson, Converter={StaticResource newPersonToVisbilityConverter}}">
+                            <TextBlock Foreground="Red" Text="Person im Personen Tab selektieren" />
+                        </WrapPanel>
+                    </Grid>
+
+                    <ListView ItemsSource="{Binding MainViewModel.Persons, Mode=OneWay}" SelectionMode="Multiple" SelectionChanged="LstChildren_SelectionChanged" x:Name="LstChildren" Margin="0,21,-0.2,0.2">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <TextBlock Text="{Binding FirstName, Mode=OneWay}" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="{Binding LastName, Mode=OneWay}" FontWeight="Bold" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" />
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0" DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
+                <Button Name="BtnExport" Content="Export" HorizontalAlignment="Left" VerticalAlignment="Top" Click="BtnExport_Click" />
+            </Grid>
+
+            <Grid Grid.Row="1" Name="GrdGenealogyImage" DataContext="{Binding MainViewModel, Source={StaticResource Locator}}">
+                <Grid.Background>
+                    <ImageBrush x:Name="GrdGenealogyImageBackground" ImageSource="{Binding BackgroundImage}" Stretch="Uniform" AlignmentX="Center" AlignmentY="Center" Opacity="0.4" />
+                </Grid.Background>
+
+                <svgc:SvgViewbox x:Name="svgGenealogy" Stretch="Uniform" local:SvgViewboxAttachedProperties.Source="{Binding GenealogyImage, Mode=OneWay}" Margin="0,0,0,0" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

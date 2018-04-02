@@ -1,0 +1,38 @@
+﻿digraph simpsons {  
+  subgraph Generation1 {
+    rank  =  same
+    Homer [shape = box, color = blue] 
+    Marge [shape = box, color = pink] 
+
+    HomerAndMarge [shape = point]
+    Homer -> HomerAndMarge [dir = none]
+    Marge -> HomerAndMarge [dir = none]
+  }
+
+  subgraph Generation1Sons {
+    rank  =  same
+    BartSon [shape = point] 
+    LisaSon [shape = point] 
+    MaggieSon [shape = point] 
+
+    BartSon -> LisaSon [dir = none]
+    LisaSon -> MaggieSon [dir = none]
+  }
+
+  HomerAndMarge -> LisaSon [dir = none]
+
+  subgraph Generation2 {
+    rank  =  same
+    Bart [shape = box, color = blue] 
+    Lisa [shape = box, color = pink] 
+    Maggie [shape = box, color = pink] 
+  }
+
+  BartSon -> Bart [dir = none]
+  LisaSon -> Lisa [dir = none]
+  MaggieSon -> Maggie [dir = none]
+}
+
+
+NO: http://www.webgraphviz.com/
+YES: https://dreampuf.github.io/GraphvizOnline/
