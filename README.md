@@ -1,5 +1,5 @@
 # genealogy
-Genealogy MVVM WPF Application. Uses graphviz (via slightly modified Shields.GraphViz) to render family tree graphic.
+Genealogy MVVM WPF Application. Uses graphviz (via slightly modified <a href="https://github.com/timothy-shields/graphviz">Shields.GraphViz</a>) to render family tree graphic.
 
 <b>Features:</b>
  - Automatically detect gender via firstname
